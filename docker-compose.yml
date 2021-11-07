@@ -1,0 +1,56 @@
+version: "3"
+services:
+  # nginx:
+  #   image: nginx:alpine
+  #   container_name: tracker_nginx
+  #   volumes:
+  #     - ./nginx:/etc/nginx/templates
+  #     - ./nginx/cert.pem:/cert.pem:ro
+  #     - ./nginx/cert.key:/cert.key:ro
+  #   env_file:
+  #     - .env
+  #   ports:
+  #     - 8443:8443
+  #   restart: always
+  #   links:
+  #     - app
+
+  postgres:
+    image: postgres:alpine
+    container_name: tracker_postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=$DB_NAME
+      - POSTGRES_USER=$DB_USER
+      - POSTGRES_PASSWORD=$DB_PASSWORD
+    env_file:
+      - .env
+    restart: always
+
+  # redis:
+  #   image: redis:alpine
+  #   container_name: tracker_redis
+  #   restart: always
+
+  # app:
+  #   build: ./src
+  #   container_name: tracker_app
+  #   environment:
+  #     - DB_HOST=postgres
+  #     - DB_PORT=5432
+  #     # - REDIS_HOST=redis
+  #   env_file:
+  #     - .env
+  #   volumes:
+  #     - ./src:/src
+  #     - ./nginx:/nginx:ro
+  #   command: python3 app.py
+  #   restart: always
+  #   links:
+  #     - postgres
+  #     # - redis
+volumes:
+  pgdata:
