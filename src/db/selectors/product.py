@@ -15,7 +15,9 @@ async def select_products(session: AsyncSession) -> List[Product]:
 
 async def select_report(session: AsyncSession) -> List[Tuple]:
     substatement = select(Product).where(Product.competitor_id != None).cte()
-    statement = select(substatement.c.id, substatement.c.name, substatement.c.original_url, substatement.c.price, 
+    statement = select(substatement.c.id, substatement.c.name, 
+                       substatement.c.original_url, substatement.c.price, 
+                       substatement.c.seller, 
                        Product.id, Product.original_url, Product.price)\
         .join(Product, substatement.c.competitor_id == Product.id)
     result = await session.execute(statement)

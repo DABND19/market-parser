@@ -21,5 +21,5 @@ try:
 except ImportError:
     pass
 
-DB_URL = f"postgresql+asyncpg://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+DB_URL = f"sqlite+aiosqlite:///database.sqlite"
 WEBHOOK_URL = f"https://{NGINX_HOST}:{NGINX_PORT}/"

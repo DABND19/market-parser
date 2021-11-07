@@ -3,7 +3,7 @@ import enum
 
 from sqlalchemy import Column
 from sqlalchemy.sql.schema import ForeignKey
-from sqlalchemy.sql.sqltypes import Enum, Float, String, Text, BigInteger, DateTime
+from sqlalchemy.sql.sqltypes import Enum, Float, String, Text, Integer, DateTime
 
 from db.models.base import Base
 
@@ -15,7 +15,7 @@ class Market(enum.Enum):
 class Product(Base):
     __tablename__ = 'products'
 
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
 
     created_at_dt = Column(DateTime, nullable=False, default=datetime.now)
     updated_at_dt = Column(DateTime, nullable=False, default=datetime.now)
@@ -24,4 +24,5 @@ class Product(Base):
     price = Column(Float)
     market = Column(Enum(Market, name='market_enum'), nullable=False)
     original_url = Column(String(2500), nullable=False)
-    competitor_id = Column(BigInteger, ForeignKey('products.id'))
+    competitor_id = Column(Integer, ForeignKey('products.id'))
+    seller = Column(String(512))
