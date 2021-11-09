@@ -2,6 +2,7 @@ import asyncio
 from csv import DictWriter
 from datetime import datetime
 from io import StringIO
+import logging
 
 import aiohttp
 from aiogram.dispatcher.filters import Command
@@ -14,6 +15,10 @@ from db.selectors.product import select_products, select_report
 from loader import dp
 from parsers import wildberries
 from utils.with_scraper import with_scraper_api
+
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 
 PARSERS = {Market.WILDBERRIES: wildberries.parse_content}
@@ -37,15 +42,20 @@ async def update_prices(session: AsyncSession):
 
     for product, content in zip(products, contents):
         if not content:
+            logger.error(f'Can\'t fetch content from url: {product.original_url}')
             continue
 
         parser = PARSERS.get(product.market)
         if not parser:
+            logger.error(f'Unsupported marketplace: {product.market}')
             continue
 
         parsed_data = parser(content)
+        if not parsed_data:
+            logger.error(f'Can\'t parse content from url: {product.original_url}.')
+            continue
+        
         product.price = parsed_data['price']
-
         product.updated_at_dt = datetime.now()
 
     await session.commit()
