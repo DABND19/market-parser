@@ -16,10 +16,5 @@ REDIS_HOST = environ.get("REDIS_HOST", "localhost")
 NGINX_HOST = environ.get("NGINX_HOST", "localhost")
 NGINX_PORT = environ.get("NGINX_PORT", "8443")
 
-try:
-    from .settings_local import *
-except ImportError:
-    pass
-
 DB_URL = f"sqlite+aiosqlite:///database.sqlite"
 WEBHOOK_URL = f"https://{NGINX_HOST}:{NGINX_PORT}/"
