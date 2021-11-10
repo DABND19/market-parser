@@ -24,11 +24,18 @@ logger.setLevel(logging.INFO)
 PARSERS = {Market.WILDBERRIES: wildberries.parse_content}
 
 
+fetcher_sem = asyncio.Semaphore(5)
+
+
 async def fetch_html(product: Product, session: aiohttp.ClientSession) -> bytes:
     request_url = with_scraper_api(product.original_url)
+    # request_url = product.original_url
 
-    async with session.get(request_url) as response:
-        if not response:
+    async with fetcher_sem, session.get(request_url) as response:
+        if not response.ok:
+            logger.error(f'Server responded with status: {response.status}')
+            logger.error(f'Reason: {await response.text()}')
+            logger.error(f'Retry-After: {response.headers.get("Retry-After")}')
             return None
         return await response.text()
 
